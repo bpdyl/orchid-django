@@ -3,6 +3,7 @@ from django.contrib import messages
 from django.views import View
 from .models import Account
 from django.contrib.auth import authenticate,login,logout
+from django.contrib.auth.mixins import LoginRequiredMixin
 # Create your views here.
 
 class LoginView(View):
@@ -20,7 +21,7 @@ class LoginView(View):
             return redirect('dashboard')
         else:
             messages.add_message(request,messages.ERROR,"Login Credential does not match")
-            return redirect('loging')
+            return redirect('login')
 
 
 
@@ -46,7 +47,8 @@ class SignupView(View):
             return redirect('signup')
 
 
-class DashboardView(View):
+class DashboardView(LoginRequiredMixin,View):
+    login_url = '/account/login'
     template_name = 'dashboard.html'
 
     def get(self,request):

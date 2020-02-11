@@ -9,6 +9,9 @@ class IncomeCategoryManager(models.Manager):
 class IncomeCategory(Category):
     objects = IncomeCategoryManager()
 
+    def __str__(self):
+        return self.title
+
     class Meta:
         db_table = 'incomecategory'
 
