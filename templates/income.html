@@ -13,6 +13,22 @@
  {% endblock %}
 
 {% block 'body' %}
-
+  <h3>All Income</h3>
+<table class="table">
+  <thead>
+  <th>Title</th>
+  <th>Amount</th>
+  <th>Date</th>
+  <th>Action</th>
+  </thead>
+ {% for i in income %}
+    <tr>
+     <td>{{i.title}}</td>
+     <td>{{i.price}}</td>
+     <td>{{i.date}}</td>
+     <td><a href="{% url 'edit_income' i.slug %}"><i class="fa fa-edit"></i> </a> | Del </td>
+    </tr>
+ {% endfor %}
+</table>
 {% endblock %}
 
