@@ -14,6 +14,7 @@ class IncomeCategory(Category):
 
     class Meta:
         db_table = 'incomecategory'
+        unique_together = ('user_id','title')
 
 
 class IncomeManager(models.Manager):
@@ -24,6 +25,9 @@ class Income(Abs):
     image = models.ImageField(upload_to='income/', null=True, blank=True)
     category = models.ForeignKey(IncomeCategory, on_delete=models.CASCADE)
     objects = IncomeManager()
+
+    def __str__(self):
+        return self.title
 
     class Meta:
         db_table = 'income'

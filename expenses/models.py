@@ -13,6 +13,7 @@ class ExpensesCategory(Category):
         return self.title
     class Meta:
         db_table = 'expensescategory'
+        unique_together = ('user_id','title')
 
 class ExpensesManager(models.Manager):
     pass

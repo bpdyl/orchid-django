@@ -4,7 +4,7 @@ from .forms import IncomeCateogyForm,IncomeFrom
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from .models import IncomeCategory,Income
-from django.views.generic import UpdateView
+from django.views.generic import UpdateView,DeleteView
 from django.urls import reverse_lazy
 # Create your views here.
 class IncomeCategoryView(LoginRequiredMixin,View):
@@ -76,3 +76,33 @@ class EditView(UpdateView):
     def get_object(self, queryset=None):
         queryset = Income.objects.filter(slug=self.kwargs['slug'])
         return super(EditView, self).get_object(queryset)
+
+
+class IncomeDeleteView(DeleteView):
+    template_name = 'income_confirm_delete.html'
+    success_url = reverse_lazy('income')
+    model = Income
+    slug_field = 'slug'
+
+
+class IncomeCategoryEditView(UpdateView):
+    form_class = IncomeCateogyForm
+    template_name = 'income_category_update.html'
+    success_url = reverse_lazy('income_category')
+    queryset = None
+
+    def get_context_data(self, **kwargs):
+        context = super(IncomeCategoryEditView, self).get_context_data()
+        context['form']=IncomeCateogyForm(instance=IncomeCategory.objects.get(slug=self.kwargs['slug']))
+        return context
+
+    def get_object(self, queryset=None):
+        queryset = IncomeCategory.objects.filter(slug=self.kwargs['slug'])
+        return super(IncomeCategoryEditView,self).get_object(queryset)
+
+
+class IncomeCategoryDeleteView(DeleteView):
+    template_name = 'income_confirm_delete.html'
+    success_url = reverse_lazy('income_category')
+    model = IncomeCategory
+    slug_field = 'slug'
