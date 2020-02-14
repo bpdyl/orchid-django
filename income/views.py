@@ -69,7 +69,7 @@ class EditView(UpdateView):
     success_url = reverse_lazy('income')
 
     def get_context_data(self, **kwargs):
-        context = super(EditView, self).get_context_data()
+        context = super().get_context_data()
         context['form'] = IncomeFrom(self.request.user.id, instance=Income.objects.get(slug=self.kwargs['slug']))
         return context
 
@@ -77,6 +77,15 @@ class EditView(UpdateView):
         queryset = Income.objects.filter(slug=self.kwargs['slug'])
         return super(EditView, self).get_object(queryset)
 
+def editIncome(request,slug):
+    form = IncomeFrom(request.user.id,request.POST or None,
+                      request.FILES or None,
+                      instance=Income.objects.get(slug=slug))
+    if form.is_valid():
+        form.save()
+        messages.add_message(request,messages.SUCCESS,"Successfully updated")
+        return redirect('income')
+    return render(request,'edit_income.html',{'form':form})
 
 class IncomeDeleteView(DeleteView):
     template_name = 'income_confirm_delete.html'
@@ -106,3 +115,24 @@ class IncomeCategoryDeleteView(DeleteView):
     success_url = reverse_lazy('income_category')
     model = IncomeCategory
     slug_field = 'slug'
+
+def editIncomeCategory(request,slug):
+    form = IncomeCateogyForm(request.POST or None,instance=IncomeCategory.objects.get(slug=slug))
+    if form.is_valid():
+        form.save()
+        messages.add_message(request, messages.SUCCESS, "Successfully updated")
+        return redirect('income_category')
+    return render(request, 'income_category_update.html', {'form': form})
+
+def deleteIncome(request,slug):
+    a = Income.objects.get(slug=slug)
+    a.delete()
+    messages.add_message(request, messages.SUCCESS, "Successfully deleted")
+    return redirect('income')
+
+
+def deleteIncomeCategory(request,slug):
+    a = IncomeCategory.objects.get(slug=slug)
+    a.delete()
+    messages.add_message(request, messages.SUCCESS, "Successfully deleted")
+    return redirect('income_category')

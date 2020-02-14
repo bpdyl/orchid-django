@@ -5,11 +5,15 @@ from .models import Account
 from django.contrib.auth import authenticate,login,logout
 from django.contrib.auth.mixins import LoginRequiredMixin
 # Create your views here.
+from django.shortcuts import HttpResponse
+from mail.mail import sendmailtouser
 
 class LoginView(View):
     template_name = 'login.html'
 
     def get(self,request):
+        if request.user.is_authenticated:
+            return redirect('dashboard')
         return render(request,self.template_name)
 
     def post(self,request,*args,**kwargs):
@@ -41,6 +45,14 @@ class SignupView(View):
         if p1==p2:
             Account.objects.create_user(e,firstname=f,lastname=l,password=p1)
             messages.add_message(request,messages.SUCCESS,"Signup successfull")
+            if sendmailtouser(subject="Account is created",
+                              message=f"Thank you for creating account! {f} your account is created please login to access your dashboard",
+                              recipient_list=[e,]
+                              ):
+                messages.add_message(request,messages.SUCCESS,"Email is sent")
+            else:
+                messages.add_message(request,messages.ERROR,"Email can not send")
+
             return redirect('login')
         else:
             messages.add_message(request,messages.ERROR,"password does not match")
